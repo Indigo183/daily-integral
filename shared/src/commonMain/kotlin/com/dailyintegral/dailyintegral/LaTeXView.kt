@@ -10,13 +10,8 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
     val latex = latex
         .split("\n\n")
-        .component1()
-        // is this even necessary?
-//        .replace("&", "&amp;")
-//        .replace("<", "&lt;")
-//        .replace(">", "&gt;")
-//        .replace("\\", "&#92;")
-        .replace("\n", "\\\\")
+        .dropLast(1)
+        .joinToString("\\\\")
 
     val html = """
         <!DOCTYPE html>
@@ -25,7 +20,7 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
             <meta name="viewport"
                   content="width=device-width, initial-scale=1.0">
 
-            <script>
+            <script>10pt
                 window.MathJax = {
                     tex: {
                         inlineMath: [['\\(', '\\)']],
@@ -40,7 +35,7 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
         </head>
 
         <body>
-            <div style="white-space: pre-wrap;">
+            <div style="white-space: pre-wrap; font-size: 75%;">
                 \[\displaylines{$latex}\]
             </div>
         </body>
