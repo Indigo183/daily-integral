@@ -11,6 +11,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
+@Serializable
+enum class Difficulty { BEGINNER, EASY, MEDIUM, HARD }
 
 @Serializable
 @JsonIgnoreUnknownKeys
@@ -18,20 +20,20 @@ data class ServerDay(val day: Int)
 
 @Serializable
 @JsonIgnoreUnknownKeys
-data class PuzzleOuterThingy(val puzzle: DailyPuzzle)
-
-@Serializable
-@JsonIgnoreUnknownKeys
 data class DailyPuzzle(
-    val difficulty: String,
+    val difficulty: Difficulty,
     val title: String,
     val latex: String,
 )
 
 @Serializable
+@JsonIgnoreUnknownKeys
+data class PuzzleOuterThingy(val puzzle: DailyPuzzle)
+
+@Serializable
 data class PuzzleRequest(
     val day: Int,
-    val difficulty: String,
+    val difficulty: Difficulty,
     val type: String,
 )
 
