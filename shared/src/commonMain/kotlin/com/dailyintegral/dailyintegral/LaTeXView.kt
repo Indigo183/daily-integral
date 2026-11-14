@@ -1,8 +1,10 @@
 package com.dailyintegral.dailyintegral
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import org.adman.kmp.webview.KWebView
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 
 @Composable
 fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
@@ -43,9 +45,17 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
         </html>
     """.trimIndent()
 
-    KWebView(
-        modifier = modifier,
-        htmlContent = html,
-        enableJavaScript = true
+    val state = rememberWebViewStateWithHTMLData(
+        data = html
+    )
+
+    DisposableEffect(state) {
+        state.webSettings.isJavaScriptEnabled = true
+        onDispose { }
+    }
+
+    WebView(
+        state = state,
+        modifier = modifier
     )
 }
