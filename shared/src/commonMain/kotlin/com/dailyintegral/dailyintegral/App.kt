@@ -11,44 +11,61 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun App(apiClient: ApiClient) {
     MaterialTheme {
-        var selectedDifficulty by remember { mutableStateOf(Difficulty.HARD) }
+        var selectedGameMode by remember { mutableStateOf(GameMode.integral) }
+        var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
         var latex by remember { mutableStateOf<String?>(null) }
-        LaunchedEffect(selectedDifficulty) {
+        LaunchedEffect(selectedGameMode, selectedDifficulty) {
             val day = apiClient.getServerDay()
-            latex = apiClient.getDailyPuzzle(PuzzleRequest(
-                day = day,
-                difficulty = selectedDifficulty,
-                type = "integral"
-            ))
+            try {
+                latex = apiClient.getDailyPuzzle(day, selectedDifficulty, selectedGameMode)
+            } catch (e: Exception) {
+                // TODO
+                println(e)
+            }
         }
 
-        latex?.let { latex ->
-            Column(
-                Modifier.padding(12.dp)
-            ) {
-                Spacer(Modifier.height(24.dp))
-                LaTeXView(latex)
+        Column(
+            Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
+            Spacer(Modifier.height(24.dp))
+            latex?.let { latex -> LaTeXView(latex) }
+
+            Column(verticalArrangement = Arrangement.SpaceBetween) {
+                for (gameMode in GameMode.entries) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = selectedGameMode == gameMode,
+                            onClick = { selectedGameMode = gameMode },
+                        )
+                        Text(gameMode.name.uppercase())
+                    }
+                }
+            }
+
+            selectedGameMode.difficulties()?.let { difficulties ->
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    for (difficulty in Difficulty.entries) {
-                        Column {
-                            Text(difficulty.name)
+                    for (difficulty in difficulties) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             RadioButton(
                                 selected = selectedDifficulty == difficulty,
                                 onClick = { selectedDifficulty = difficulty },
                             )
+                            Text(difficulty.name)
                         }
                     }
                 }
-            }
+            } ?: run { selectedDifficulty = null }
         }
     }
 }

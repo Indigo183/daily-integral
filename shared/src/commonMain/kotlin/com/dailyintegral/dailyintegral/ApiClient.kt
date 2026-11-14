@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.*
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -15,13 +16,24 @@ import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 enum class Difficulty { BEGINNER, EASY, MEDIUM, HARD }
 
 @Serializable
+enum class GameMode {
+    integral, derivative, limit, differential, engineering;
+
+    fun difficulties(): List<Difficulty>? = when (this) {
+        integral -> Difficulty.entries
+        derivative, differential -> listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD)
+        else -> null
+    }
+}
+
+
+@Serializable
 @JsonIgnoreUnknownKeys
 data class ServerDay(val day: Int)
 
 @Serializable
 @JsonIgnoreUnknownKeys
 data class DailyPuzzle(
-    val difficulty: Difficulty,
     val title: String,
     val latex: String,
 )
@@ -33,14 +45,14 @@ data class PuzzleOuterThingy(val puzzle: DailyPuzzle)
 @Serializable
 data class PuzzleRequest(
     val day: Int,
-    val difficulty: Difficulty,
-    val type: String,
+    val difficulty: Difficulty?,
+    val type: GameMode,
 )
 
 class ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
-            json()
+            json(Json { explicitNulls = false })
         }
     }
 
@@ -52,12 +64,14 @@ class ApiClient {
         return Json.decodeFromString<ServerDay>(response.bodyAsText()).day
     }
 
-    suspend fun getDailyPuzzle(request: PuzzleRequest): String {
+    suspend fun getDailyPuzzle(day: Int, difficulty: Difficulty?, gameMode: GameMode): String {
         val response = client.post("https://btulehndzikuesmrzmhd.supabase.co/functions/v1/get-daily-puzzle") {
             contentType(ContentType.Application.Json)
-            setBody(request)
+            println()
+            setBody(PuzzleRequest(day, difficulty, gameMode))
         }
 
+        println(response.request.content)
         println(response.bodyAsText())
         return Json.decodeFromString<PuzzleOuterThingy>(response.bodyAsText()).puzzle.latex
     }
