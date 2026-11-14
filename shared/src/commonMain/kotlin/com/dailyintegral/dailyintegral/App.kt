@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun App(apiClient: ApiClient) {
     MaterialTheme {
-        var selectedGameMode by remember { mutableStateOf(GameMode.integral) }
+        var selectedGameMode by remember { mutableStateOf(GameMode.Integral) }
         var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
         var latex by remember { mutableStateOf<String?>(null) }
         LaunchedEffect(selectedGameMode, selectedDifficulty) {

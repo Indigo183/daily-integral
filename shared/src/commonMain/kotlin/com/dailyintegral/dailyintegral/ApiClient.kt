@@ -8,20 +8,31 @@ import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 @Serializable
-enum class Difficulty { BEGINNER, EASY, MEDIUM, HARD }
+enum class Difficulty {
+    @SerialName("BEGINNER") Beginner,
+    @SerialName("EASY") Easy,
+    @SerialName("MEDIUM") Medium,
+    @SerialName("HARD") Hard,
+}
+
 
 @Serializable
 enum class GameMode {
-    integral, derivative, limit, differential, engineering;
+    @SerialName("integral") Integral,
+    @SerialName("derivative") Derivative,
+    @SerialName("differential") Differential,
+    @SerialName("limit") Limit,
+    @SerialName("engineering") Engineering;
 
     fun difficulties(): List<Difficulty>? = when (this) {
-        integral -> Difficulty.entries
-        derivative, differential -> listOf(Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD)
+        Integral -> Difficulty.entries
+        Derivative, Differential -> listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
         else -> null
     }
 }
