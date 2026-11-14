@@ -8,11 +8,6 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 
 @Composable
 fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
-    val latex = latex
-        .split("\n\n")
-        .dropLast(1)
-        .joinToString("\\\\")
-
     val html = """
         <!DOCTYPE html>
         <html>
@@ -42,9 +37,7 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
         </html>
     """.trimIndent()
 
-    val state = rememberWebViewStateWithHTMLData(
-        data = html
-    )
+    val state = rememberWebViewStateWithHTMLData(data = html)
 
     DisposableEffect(state) {
         state.webSettings.isJavaScriptEnabled = true
@@ -53,6 +46,6 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
 
     WebView(
         state = state,
-        modifier = modifier
+        modifier = modifier,
     )
 }

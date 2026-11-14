@@ -73,6 +73,10 @@ class ApiClient {
 
         println(response.request.content)
         println(response.bodyAsText())
-        return Json.decodeFromString<PuzzleOuterThingy>(response.bodyAsText()).puzzle.latex
+        val latex = Json.decodeFromString<PuzzleOuterThingy>(response.bodyAsText()).puzzle.latex
+        return latex
+            .split("\n\n")
+            .dropLast(1)
+            .joinToString("\\\\")
     }
 }
