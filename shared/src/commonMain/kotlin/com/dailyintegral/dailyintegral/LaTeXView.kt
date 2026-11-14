@@ -9,12 +9,14 @@ import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 @Composable
 fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
     val latex = latex
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\\", "&#92;")
+        .split("\n\n")
+        .component1()
+        // is this even necessary?
+//        .replace("&", "&amp;")
+//        .replace("<", "&lt;")
+//        .replace(">", "&gt;")
+//        .replace("\\", "&#92;")
         .replace("\n", "\\\\")
-    println("new latex:\n$latex")
 
     val html = """
         <!DOCTYPE html>
