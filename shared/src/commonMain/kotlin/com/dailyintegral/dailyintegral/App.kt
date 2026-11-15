@@ -21,21 +21,11 @@ fun App(dataStore: DataStore) {
         var selectedGameMode by remember { mutableStateOf(GameMode.Integral) }
         var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
         var puzzles by remember { mutableStateOf<Map<Puzzle, String>?>(null) }
-//        var latex by remember { mutableStateOf<String?>(null) }
 
         LaunchedEffect(Unit) {
             val day = ApiClient.getServerDay()
             if (dataStore.getCachedDay() != day) puzzles = dataStore.updateAllPuzzles(day)
         }
-//        LaunchedEffect(selectedGameMode, selectedDifficulty) {
-//            val day = ApiClient.getServerDay()
-//            try {
-//                latex = ApiClient.getDailyPuzzle(day, selectedGameMode, selectedDifficulty)
-//            } catch (e: Exception) {
-//                // TODO
-//                println(e)
-//            }
-//        }
 
         Column(
             Modifier.padding(12.dp),
