@@ -16,27 +16,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun App(apiClient: ApiClient) {
+fun App(dataStore: DataStore) {
     MaterialTheme {
         var selectedGameMode by remember { mutableStateOf(GameMode.Integral) }
         var selectedDifficulty by remember { mutableStateOf<Difficulty?>(null) }
-        var latex by remember { mutableStateOf<String?>(null) }
-        LaunchedEffect(selectedGameMode, selectedDifficulty) {
-            val day = apiClient.getServerDay()
-            try {
-                latex = apiClient.getDailyPuzzle(day, selectedDifficulty, selectedGameMode)
-            } catch (e: Exception) {
-                // TODO
-                println(e)
-            }
+        var puzzles by remember { mutableStateOf<Map<Puzzle, String>?>(null) }
+//        var latex by remember { mutableStateOf<String?>(null) }
+
+        LaunchedEffect(Unit) {
+            val day = ApiClient.getServerDay()
+            if (dataStore.getCachedDay() != day) puzzles = dataStore.updateAllPuzzles(day)
         }
+//        LaunchedEffect(selectedGameMode, selectedDifficulty) {
+//            val day = ApiClient.getServerDay()
+//            try {
+//                latex = ApiClient.getDailyPuzzle(day, selectedGameMode, selectedDifficulty)
+//            } catch (e: Exception) {
+//                // TODO
+//                println(e)
+//            }
+//        }
 
         Column(
             Modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Spacer(Modifier.height(24.dp))
-            latex?.let { latex -> LaTeXView(latex) }
+            puzzles?.get(Puzzle(selectedGameMode, selectedDifficulty))?.let { LaTeXView(it) }
 
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 for (gameMode in GameMode.entries) {

@@ -6,15 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 
 class MainActivity : ComponentActivity() {
-    lateinit var apiClient: ApiClient
+    lateinit var dataStore: AndroidDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        apiClient = ApiClient()
+        dataStore = AndroidDataStore(this)
 
         setContent {
-            App(apiClient)
+            App(dataStore)
         }
     }
 }

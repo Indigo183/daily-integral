@@ -12,6 +12,7 @@ androidx-testExt = "1.3.0"
 androidx-testRunner = "1.7.0"
 composeMultiplatform = "1.12.2"
 composeWebviewMultiplatform = "2.0.3"
+datastorePreferences = "1.3.0"
 junit = "4.13.2"
 kotlin = "2.4.21"
 kotlinxSerializationJson = "1.13.0"
@@ -20,6 +21,7 @@ kwebview = "1.61.0"
 material3 = "1.12.0-alpha03"
 
 [libraries]
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 compose-webview-multiplatform = { module = "io.github.kevinnzou:compose-webview-multiplatform", version.ref = "composeWebviewMultiplatform" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

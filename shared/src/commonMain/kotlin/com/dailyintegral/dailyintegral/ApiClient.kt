@@ -8,35 +8,9 @@ import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonIgnoreUnknownKeys
-
-@Serializable
-enum class Difficulty {
-    @SerialName("BEGINNER") Beginner,
-    @SerialName("EASY") Easy,
-    @SerialName("MEDIUM") Medium,
-    @SerialName("HARD") Hard,
-}
-
-
-@Serializable
-enum class GameMode {
-    @SerialName("integral") Integral,
-    @SerialName("derivative") Derivative,
-    @SerialName("differential") Differential,
-    @SerialName("limit") Limit,
-    @SerialName("engineering") Engineering;
-
-    fun difficulties(): List<Difficulty>? = when (this) {
-        Integral -> Difficulty.entries
-        Derivative, Differential -> listOf(Difficulty.Easy, Difficulty.Medium, Difficulty.Hard)
-        else -> null
-    }
-}
-
 
 @Serializable
 @JsonIgnoreUnknownKeys
@@ -44,10 +18,7 @@ data class ServerDay(val day: Int)
 
 @Serializable
 @JsonIgnoreUnknownKeys
-data class DailyPuzzle(
-    val title: String,
-    val latex: String,
-)
+data class DailyPuzzle(val latex: String)
 
 @Serializable
 @JsonIgnoreUnknownKeys
@@ -56,11 +27,11 @@ data class PuzzleOuterThingy(val puzzle: DailyPuzzle)
 @Serializable
 data class PuzzleRequest(
     val day: Int,
-    val difficulty: Difficulty?,
     val type: GameMode,
+    val difficulty: Difficulty?,
 )
 
-class ApiClient {
+object ApiClient {
     private val client = HttpClient {
         install(ContentNegotiation) {
             json(Json { explicitNulls = false })
@@ -75,11 +46,11 @@ class ApiClient {
         return Json.decodeFromString<ServerDay>(response.bodyAsText()).day
     }
 
-    suspend fun getDailyPuzzle(day: Int, difficulty: Difficulty?, gameMode: GameMode): String {
+    suspend fun getDailyPuzzle(day: Int, gameMode: GameMode, difficulty: Difficulty?): String {
         val response = client.post("https://btulehndzikuesmrzmhd.supabase.co/functions/v1/get-daily-puzzle") {
             contentType(ContentType.Application.Json)
             println()
-            setBody(PuzzleRequest(day, difficulty, gameMode))
+            setBody(PuzzleRequest(day, gameMode, difficulty))
         }
 
         println(response.request.content)
