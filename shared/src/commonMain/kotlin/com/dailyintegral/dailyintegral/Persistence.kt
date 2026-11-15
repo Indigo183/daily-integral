@@ -45,9 +45,7 @@ interface DataStore {
 
     suspend fun updateAllPuzzles(day: Int): Map<Puzzle, String>? {
         try {
-            val map = getCachedPuzzles() ?: mutableMapOf()
-
-            coroutineScope {
+            val map = coroutineScope {
                 GameMode.entries.flatMap { gameMode ->
                     gameMode.difficulties()?.map { difficulty ->
                         async {

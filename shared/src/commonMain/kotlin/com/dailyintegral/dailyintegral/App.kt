@@ -48,7 +48,7 @@ fun App(dataStore: DataStore) {
                             selected = selectedGameMode == gameMode,
                             onClick = { selectedGameMode = gameMode },
                         )
-                        Text(gameMode.name.uppercase())
+                        Text(gameMode.name)
                     }
                 }
             }
