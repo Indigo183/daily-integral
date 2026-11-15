@@ -24,7 +24,8 @@ fun App(dataStore: DataStore) {
 
         LaunchedEffect(Unit) {
             val day = ApiClient.getServerDay()
-            if (dataStore.getCachedDay() != day) puzzles = dataStore.updateAllPuzzles(day)
+            puzzles = if (dataStore.getCachedDay() != day) dataStore.updateAllPuzzles(day)
+            else dataStore.getCachedPuzzles()
         }
 
         Column(
@@ -32,7 +33,13 @@ fun App(dataStore: DataStore) {
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Spacer(Modifier.height(24.dp))
-            puzzles?.get(Puzzle(selectedGameMode, selectedDifficulty))?.let { LaTeXView(it) }
+            puzzles?.get(
+                Puzzle(
+                    selectedGameMode,
+                    selectedDifficulty?.takeIf {
+                        selectedGameMode.difficulties()?.contains(it) == true
+                    })
+            )?.let { LaTeXView(it) }
 
             Column(verticalArrangement = Arrangement.SpaceBetween) {
                 for (gameMode in GameMode.entries) {
@@ -61,7 +68,7 @@ fun App(dataStore: DataStore) {
                         }
                     }
                 }
-            } ?: run { selectedDifficulty = null }
+            }// ?: run { selectedDifficulty = null }
         }
     }
 }

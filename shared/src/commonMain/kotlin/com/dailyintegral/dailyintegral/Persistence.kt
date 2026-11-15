@@ -68,6 +68,7 @@ interface DataStore {
             }
 
             setCachedPuzzles(map)
+            setCachedDay(day)
             return map
         } catch (e: Exception) {
             // TODO
