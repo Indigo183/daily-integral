@@ -23,9 +23,22 @@ fun App(dataStore: DataStore) {
         var puzzles by remember { mutableStateOf<Map<Puzzle, String>?>(null) }
 
         LaunchedEffect(Unit) {
+            // TODO: move all loading to loading screen to remove nullability / default values
+            dataStore.getDefault()?.let { (gameMode, difficulty) ->
+                selectedGameMode = gameMode
+                selectedDifficulty = difficulty
+            }
+
             val day = ApiClient.getServerDay()
             puzzles = if (dataStore.getCachedDay() != day) dataStore.updateAllPuzzles(day)
             else dataStore.getCachedPuzzles()
+        }
+
+        LaunchedEffect(selectedGameMode) {
+            dataStore.setGameMode(selectedGameMode)
+        }
+        LaunchedEffect(selectedDifficulty) {
+            selectedDifficulty?.let { dataStore.setDifficulty(it) }
         }
 
         Column(
