@@ -1,5 +1,8 @@
 package com.dailyintegral.dailyintegral
 
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -44,16 +47,24 @@ interface DataStore {
         try {
             val map = getCachedPuzzles() ?: mutableMapOf()
 
-            for (gameMode in GameMode.entries) {
-                gameMode.difficulties()?.let {
-                    for (difficulty in it) {
-                        map[Puzzle(gameMode, difficulty)] =
-                            ApiClient.getDailyPuzzle(day, gameMode, difficulty)
-                    }
-                } ?: run {
-                    map[Puzzle(gameMode, null)] =
-                        ApiClient.getDailyPuzzle(day, gameMode, null)
-                }
+            coroutineScope {
+                GameMode.entries.flatMap { gameMode ->
+                    gameMode.difficulties()?.map { difficulty ->
+                        async {
+                            Puzzle(gameMode, difficulty) to ApiClient.getDailyPuzzle(
+                                day,
+                                gameMode,
+                                difficulty,
+                            )
+                        }
+                    } ?: listOf(async {
+                        Puzzle(gameMode, null) to ApiClient.getDailyPuzzle(
+                            day,
+                            gameMode,
+                            null,
+                        )
+                    })
+                }.awaitAll().toMap()
             }
 
             setCachedPuzzles(map)
