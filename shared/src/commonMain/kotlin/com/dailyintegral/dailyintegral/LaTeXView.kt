@@ -30,7 +30,7 @@ fun LaTeXView(latex: String, modifier: Modifier = Modifier) {
         </head>
 
         <body>
-            <div style="white-space: pre-wrap; font-size: 75%;">
+            <div style="white-space: pre-wrap; font-size: 70%;">
                 \[\displaylines{$latex}\]
             </div>
         </body>
