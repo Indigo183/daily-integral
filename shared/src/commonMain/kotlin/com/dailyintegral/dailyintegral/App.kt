@@ -32,8 +32,10 @@ fun App(dataStore: DataStore) {
             selectedDifficulty = difficulty
         }
 
-        val day = ApiClient.getServerDay()
-        puzzles = if (dataStore.getCachedDay() != day) dataStore.updateAllPuzzles(day)
+        // no internet? no problem!
+        val day = try { ApiClient.getServerDay() } catch (e: Exception) { null }
+        puzzles = if (day != null && dataStore.getCachedDay() != day)
+            dataStore.updateAllPuzzles(day)
         else dataStore.getCachedPuzzles()
     }
 
