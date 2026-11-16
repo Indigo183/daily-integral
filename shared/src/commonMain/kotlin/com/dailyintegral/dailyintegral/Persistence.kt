@@ -20,7 +20,8 @@ enum class GameMode {
     @SerialName("derivative") Derivative,
     @SerialName("differential") Differential,
     @SerialName("limit") Limit,
-    @SerialName("engineering") Engineering;
+    @SerialName("engineering") Engineering,
+    @SerialName("logic") Logic;
 
     fun difficulties(): List<Difficulty>? = when (this) {
         Integral -> Difficulty.entries
