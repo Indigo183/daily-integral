@@ -26,17 +26,10 @@ fun App(dataStore: DataStore) {
     var puzzles by remember { mutableStateOf<Map<Puzzle, String>?>(null) }
 
     LaunchedEffect(Unit) {
-        // TODO: move all loading to loading screen to remove nullability / default values
-        dataStore.getDefault()?.let { (gameMode, difficulty) ->
-            selectedGameMode = gameMode
-            selectedDifficulty = difficulty
-        }
-
-        // no internet? no problem!
-        val day = try { ApiClient.getServerDay() } catch (e: Exception) { null }
-        puzzles = if (day != null && dataStore.getCachedDay() != day)
-            dataStore.updateAllPuzzles(day)
-        else dataStore.getCachedPuzzles()
+        val temp = dataStore.loadCache()
+        puzzles = temp.component1()
+        temp.component2()?.component1()?.let { selectedGameMode = it }
+        temp.component2()?.component2()?.let { selectedDifficulty = it }
     }
 
     LaunchedEffect(selectedGameMode) {

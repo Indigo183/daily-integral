@@ -42,28 +42,30 @@ interface DataStore {
     suspend fun setDifficulty(difficulty: Difficulty)
     suspend fun setCachedPuzzles(map: Map<Puzzle, String>)
 
-    suspend fun addPuzzles(vararg keys: Pair<Puzzle, String>)
-
     suspend fun updateAllPuzzles(day: Int): Map<Puzzle, String>? {
         try {
             val map = coroutineScope {
                 GameMode.entries.flatMap { gameMode ->
                     gameMode.difficulties()?.map { difficulty ->
                         async {
-                            Puzzle(gameMode, difficulty) to ApiClient.getDailyPuzzle(
-                                day,
-                                gameMode,
-                                difficulty,
-                            )
+                            try {
+                                Puzzle(gameMode, difficulty) to ApiClient.getDailyPuzzle(
+                                    day,
+                                    gameMode,
+                                    difficulty,
+                                )
+                            } catch (e: Exception) { null }
                         }
                     } ?: listOf(async {
-                        Puzzle(gameMode, null) to ApiClient.getDailyPuzzle(
-                            day,
-                            gameMode,
-                            null,
-                        )
+                        try {
+                            Puzzle(gameMode, null) to ApiClient.getDailyPuzzle(
+                                day,
+                                gameMode,
+                                null,
+                            )
+                        } catch (e: Exception) { null }
                     })
-                }.awaitAll().toMap()
+                }.awaitAll().filterNotNull().toMap()
             }
 
             setCachedPuzzles(map)
@@ -74,5 +76,19 @@ interface DataStore {
             println(e)
             return null
         }
+    }
+
+    suspend fun loadCache(): Pair<Map<Puzzle, String>?, Puzzle?> {
+        val selectedPuzzle = getDefault()
+
+        // no internet? no problem!
+        val puzzles = try {
+            val day = ApiClient.getServerDay()
+            if (getCachedDay() != day) updateAllPuzzles(day) else getCachedPuzzles()
+        } catch (e: Exception) {
+            getCachedPuzzles()
+        }
+
+        return puzzles to selectedPuzzle
     }
 }

@@ -19,13 +19,8 @@ class Widget : GlanceAppWidget() {
         // Use `withContext` to switch to another thread for long running
         // operations.
 
-        val puzzle = dataStore.getDefault()
-
-        // no internet? no problem!
-        val day = try { ApiClient.getServerDay() } catch (e: Exception) { null }
-        val puzzles = if (day != null && dataStore.getCachedDay() != day)
-            dataStore.updateAllPuzzles(day)
-        else dataStore.getCachedPuzzles()
+        val temp = dataStore.loadCache()
+        val (puzzles, puzzle) = temp
 
         val latex = puzzle?.let {
             puzzles?.get(
@@ -45,5 +40,15 @@ class Widget : GlanceAppWidget() {
                 MaterialTheme.colorScheme.onPrimary,
             )
         }
+    }
+
+    override fun onCompositionError(
+        context: Context,
+        glanceId: GlanceId,
+        appWidgetId: Int,
+        throwable: Throwable
+    ) {
+        println("\n\n\nGLANCE ERROR:\n$throwable")
+        super.onCompositionError(context, glanceId, appWidgetId, throwable)
     }
 }

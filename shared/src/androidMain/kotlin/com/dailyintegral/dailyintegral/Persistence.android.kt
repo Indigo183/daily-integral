@@ -60,8 +60,4 @@ class AndroidDataStore(private val context: Context) : DataStore {
             it[stringPreferencesKey("puzzles")] = json.encodeToString(map)
         }
     }
-
-    override suspend fun addPuzzles(vararg keys: Pair<Puzzle, String>) {
-        TODO("Not yet implemented")
-    }
 }
