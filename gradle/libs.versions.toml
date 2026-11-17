@@ -21,6 +21,8 @@ kwebview = "1.61.0"
 material3 = "1.12.0-alpha03"
 foundation = "1.12.1"
 material3Version = "1.4.0"
+glanceAppwidget = "1.2.0"
+jlatexmathAndroid = "0.2.0"
 
 [libraries]
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
@@ -52,6 +54,8 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 kwebview = { module = "io.github.shadmanadman:kwebview", version.ref = "kwebview" }
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "foundation" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3Version" }
+androidx-glance-appwidget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glanceAppwidget" }
+jlatexmath-android = { group = "ru.noties", name = "jlatexmath-android", version.ref = "jlatexmathAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

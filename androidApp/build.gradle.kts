@@ -15,7 +15,10 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.jlatexmath.android)
     implementation(libs.androidx.material3)
+    implementation(libs.compose.webview.multiplatform)
 
     implementation(libs.compose.uiToolingPreview)
     debugImplementation(libs.compose.uiTooling)
